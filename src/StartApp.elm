@@ -33,7 +33,7 @@ get values from JavaScript, they will come in through a port as a signal which
 you can pipe into your app as one of the `inputs`.
 -}
 type alias Config model action =
-    { init : (model, Effects action)
+    { init : Signal.Address action -> (model, Effects action)
     , update : action -> model -> (model, Effects action)
     , view : Signal.Address action -> model -> Html
     , inputs : List (Signal.Signal action)
@@ -106,7 +106,7 @@ start config =
 
         -- effectsAndModel : Signal (model, Effects action)
         effectsAndModel =
-            Signal.foldp update config.init inputs
+            Signal.foldp update (config.init address) inputs
 
         model =
             Signal.map fst effectsAndModel
